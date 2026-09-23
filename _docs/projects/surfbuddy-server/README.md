@@ -14,7 +14,7 @@ The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/
 - `modified_files/{etc,root,var}/` — literal overlay files copied onto the server's real `/etc`, `/root`, `/var` by `install.php`'s `overwriteFiles()`. This is where the actual server config lives (vhosts, FPM pools, cron, Postfix/DKIM, sysctl, SSH keys).
 - `scripts/install.php` — the ~650-line provisioner (see below).
 - `scripts/cron.php` — see [cron](../../architecture/cron.md).
-- `scripts/getgrib.py`, `readgrib.py`, `parsegrib.php` — early/experimental GRIB2 (ECMWF weather data) prototyping, superseded by the DMI integration in `surfbuddy-v3`. Likely not load-bearing.
+- `scripts/getgrib.py`, `readgrib.py`, `parsegrib.php` — early/experimental GRIB2 prototyping (pygrib/eccodes, ECMWF data). Not load-bearing themselves, but they anticipated the approach `surfbuddy-v3`'s `ECMWF.php`/`scripts/decode_grib.py` actually ended up using — see [ECMWF map fetch](../../architecture/ecmwf-map-fetch.md).
 - `misc/` — `.gpg` public signing keys for apt repos (Google Cloud, Syncthing) — not secret.
 
 ## How it relates to the other repos

@@ -6,3 +6,4 @@ Cross-cutting mechanics of the Surfbuddy system. These describe how things actua
 - [Cron](cron.md)
 - [Forecast generation](forecast-generation.md)
 - [DMI GRIB fetch](dmi-grib-fetch.md)
+- [ECMWF map fetch](ecmwf-map-fetch.md)
