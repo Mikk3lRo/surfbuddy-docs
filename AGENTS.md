@@ -61,6 +61,9 @@ Repeated "types" of work within a specific part of the system should be describe
 ### Project indexes
 
 - [Project landscape](_docs/projects/README.md)
+- [surfbuddy-server](_docs/projects/surfbuddy-server/README.md)
+- [surfbuddy-v3](_docs/projects/surfbuddy-v3/README.md)
+- [surfbuddy-vue](_docs/projects/surfbuddy-vue/README.md)
 
 ### Architecture
 

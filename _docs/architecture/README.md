@@ -4,3 +4,4 @@ Cross-cutting mechanics of the Surfbuddy system. These describe how things actua
 
 - [Database](database.md)
 - [Cron](cron.md)
+- [Forecast generation](forecast-generation.md)
