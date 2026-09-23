@@ -9,7 +9,7 @@ No README exists in the repo itself.
 - `src/apiHandlers/` — route controllers: `cronHandler` (see [cron](../../architecture/cron.md)), `forecastHandler`, `tilesHandler`, `observationsHandler`, `shareHandler`, `miscHandler`.
 - `src/apiResponses/` — thin Slim response wrapper (`json`, `plainText`, cache-control helpers).
 - `src/datastores/` — raw-SQL DB access per domain: `observationsDatastore`, `settingsDatastore`, `shareDatastore`, `errorsDatastore`.
-- `src/integrations/` — external data sources: `DMI.php` (Danish Meteorological Institute govcloud API, HARMONIE_DINI_SF model — forecast grids + station observations), `openMeteo.php` (Open-Meteo.com, point forecasts), `axesInfo.php`.
+- `src/integrations/` — external data sources: `DMI.php` (Danish Meteorological Institute Open Data API at `opendataapi.dmi.dk` — station observations via the EDR `metObs` endpoint; HARMONIE_DINI_SF forecast grids via the STAC `forecastdata` endpoint + `gribReader.php`, not the EDR `forecastedr`/`cube` endpoint — see [DMI GRIB fetch](../../architecture/dmi-grib-fetch.md)), `gribReader.php` (minimal GRIB2 parser used only for the Lambert Conformal + simple-packing subset DMI's HARMONIE files use — throws on anything else), `openMeteo.php` (Open-Meteo.com, point forecasts), `axesInfo.php`.
 - `src/mapTiles/`, `src/marchingSquares/`, `src/raycasting/`, `src/geometry/` — the forecast-tile generation pipeline, see [forecast generation](../../architecture/forecast-generation.md).
 - `src/middlewares/` — `jsonMiddleware` (default JSON content negotiation).
 - `src/SBconfig.php` — static config class: paths, DMI API key, DB credentials, `isMainServer()` host check. Not loaded from `.env` — see Secrets below.
