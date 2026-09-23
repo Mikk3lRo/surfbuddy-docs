@@ -45,6 +45,8 @@ On a 429, that specific mirror is blocked for 300s (`settingsDatastore` key `ecm
 
 The thinning boundary is aligned to ECMWF's actual UTC-anchored native GRIB steps (not round Danish local hours, unlike the rest of the point-forecast display) so that each shown ECMWF row can be matched to a real generated map tile — a `mapTime` field is attached when the matched tile's actual valid time differs from the row's own (Danish-local) timestamp, shown in `TheOlMapRaw.vue`'s time indicator.
 
+The separate `/forecasts/comparison/p/{lat}/{lng}` endpoint uses the same access gate but returns wind point forecasts for eight Open-Meteo models. See [forecast model comparison](../features/forecast-model-comparison.md).
+
 ## Cost
 
 ~1.5MB per forecast step (10u+10v combined, CCSDS-compressed, whole global 0.25° field — Range requests fetch by GRIB message, not by geographic crop, same limitation DMI has). 85 native steps per run (3-hourly to 144h, 6-hourly to 360h) × 4 runs/day ≈ 0.5GB/day, ~15GB/month, from ECMWF's servers.

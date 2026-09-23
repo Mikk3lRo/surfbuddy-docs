@@ -9,7 +9,7 @@ README in the repo is the unmodified Vite/Vue scaffold text — no project-speci
 - `src/main.ts`, `src/App.vue` — entry point and root component.
 - `src/router/index.ts` — 3 routes: `/` (home), `/:base64position` (a specific/shared map position, reuses `HomeView`), `/dev/GeneratePwaAssets` (dev utility).
 - `src/views/HomeView.vue` — the main (only real) app view.
-- `src/components/` — `TheOlMapRaw.vue` (core map), `TheTimeSlider.vue` (HARMONIE-only, used in production), `TheTimeSliderMultiForecast.vue` (adds the ECMWF section/section-labels/section-dividers on top of the same steps; staging/dev only, see below), `ShareDialog.vue`, `Cell*.vue` (forecast value cells: wind/gust/direction/symbol/temperature/rain), `Button.vue`, `TheLogo.vue`.
+- `src/components/` — `TheOlMapRaw.vue` (core map and comparison toggle), `TheTimeSlider.vue` (HARMONIE-only, used in production), `TheTimeSliderMultiForecast.vue` (extended ECMWF timeline and forecast-model comparison; staging/dev only, see below), `ShareDialog.vue`, `Cell*.vue` (forecast value cells: wind/gust/direction/symbol/temperature/rain), `Button.vue`, `TheLogo.vue`. See [forecast model comparison](../../features/forecast-model-comparison.md).
 - `src/classes/` — OpenLayers layer classes (`windspeedLayer.ts`, `winddirectionLayer.ts`, `crosshairLayer.ts`, `observationsLayer.ts`) and map helpers (`latlng.ts`, `axes.ts`, `windGrid.ts`).
 - `src/api/` — `ApiRequests.ts` (fetch wrapper), `ApiForecasts.ts`, `ApiShare.ts`.
 
@@ -19,11 +19,11 @@ OpenLayers (`ol` + `ol-ext`), not Leaflet/Mapbox. Wind speed comes from the back
 
 ## Staging-only features
 
-`HomeView.vue` sets `showMultiForecastSlider` (and similar flags elsewhere, e.g. `ShareDialog.vue`'s dev-mode gate) from `import.meta.env.MODE === 'development' || window.location.host == 'staging.surfbuddy.dk'`, and swaps in the staging/dev-only component instead of the production one. This is a *display* gate only — the backend independently gates the underlying ECMWF point-forecast data server-side (by `Origin`/`Referer` header, since `backend.surfbuddy.dk` is shared by both the live and staging frontends), so the extra data isn't served to the live app regardless of what the frontend does. See [ECMWF map fetch](../../architecture/ecmwf-map-fetch.md#point-forecasts-staging-dev-only).
+`HomeView.vue` sets `showMultiForecastSlider` (and similar flags elsewhere, e.g. `ShareDialog.vue`'s dev-mode gate) from `import.meta.env.MODE === 'development' || window.location.host == 'staging.surfbuddy.dk'`, and swaps in the staging/dev-only component instead of the production one. This also enables the map's forecast-model comparison toggle. This is a *display* gate only — the backend independently gates the extended ECMWF and comparison point-forecast data server-side by `Origin`/`Referer`, since `backend.surfbuddy.dk` is shared by both frontends. See [ECMWF map fetch](../../architecture/ecmwf-map-fetch.md#point-forecasts-stagingdev-only) and [forecast model comparison](../../features/forecast-model-comparison.md).
 
 ## Backend communication
 
-`src/api/ApiRequests.ts` hardcodes the API base URL (`https://backend.surfbuddy.dk`) — no `.env`, no dev/staging switch, no Vite proxy config. Endpoints consumed: `/forecasts/{model}/latest`, `/forecasts/{model}/p/{lat}/{lng}`, `/observations/latest`, `/observations/location/{id}`, plus the share endpoint (`ApiShare.ts`) that returns a token used to build `https://surfbuddy.dk/s-{token}` links.
+`src/api/ApiRequests.ts` hardcodes the API base URL (`https://backend.surfbuddy.dk`) — no `.env`, no dev/staging switch, no Vite proxy config. Endpoints consumed: `/forecasts/{model}/latest`, `/forecasts/{model}/p/{lat}/{lng}`, `/forecasts/comparison/p/{lat}/{lng}`, `/observations/latest`, `/observations/location/{id}`, plus the share endpoint (`ApiShare.ts`) that returns a token used to build `https://surfbuddy.dk/s-{token}` links.
 
 ## No auth
 
