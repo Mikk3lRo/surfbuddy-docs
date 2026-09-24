@@ -39,13 +39,13 @@ AWS (`ecmwf-forecasts.s3.eu-central-1.amazonaws.com`) and Azure (`ai4edataeuwest
 
 On a 429, that specific mirror is blocked for 300s (`settingsDatastore` key `ecmwfRateLimitedUntil_<md5(mirror)>`, so it persists across cron invocations) and the next mirror is tried; a non-429 error (e.g. 404 - not published yet) isn't mirror-specific and isn't retried on another mirror. A 429 is logged both to the timing log and to `errorsDatastore` (visible in the same error-count alerting DMI's issues use).
 
-## Point forecasts (staging/dev only)
+## Point forecasts
 
-`apiHandlers/forecastHandler.php`'s `pointForecast()` appends ECMWF sections (via Open-Meteo's `ecmwf_ifs025` model, not `ecmwf_seamless`) after the HARMONIE section, thinned to every 3rd hour for the first ~5 days then every 6th hour, gated behind `isExtendedForecastAllowed()` (checks the request's `Origin`/`Referer` header server-side for `staging.surfbuddy.dk`/`localhost` — the backend is a single shared instance behind both the live and staging frontends, so the frontend's own dev/staging check alone wouldn't be enough).
+`apiHandlers/forecastHandler.php`'s `pointForecast()` appends ECMWF sections (via Open-Meteo's `ecmwf_ifs025` model, not `ecmwf_seamless`) after the HARMONIE section, thinned to every 3rd hour for the first ~5 days then every 6th hour.
 
 The thinning boundary is aligned to ECMWF's actual UTC-anchored native GRIB steps (not round Danish local hours, unlike the rest of the point-forecast display) so that each shown ECMWF row can be matched to a real generated map tile — a `mapTime` field is attached when the matched tile's actual valid time differs from the row's own (Danish-local) timestamp, shown in `TheOlMapRaw.vue`'s time indicator.
 
-The point-forecast endpoint accepts `comparison=1` behind the same access gate and then returns its normal sections plus wind forecasts for eight Open-Meteo models. See [forecast model comparison](../features/forecast-model-comparison.md).
+The point-forecast endpoint accepts `comparison=1` and then returns its normal sections plus wind forecasts for eight Open-Meteo models. See [forecast model comparison](../features/forecast-model-comparison.md).
 
 ## Cost
 

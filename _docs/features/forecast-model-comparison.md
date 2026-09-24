@@ -1,6 +1,6 @@
 # Forecast model comparison
 
-The staging/development timeline can switch from separate wind, gust and direction rows to one compact row per forecast model. Each compact cell normally shows wind speed, gust and direction together. In landscape viewports below 500 px high, rows show only wind speed and direction; temperature and rain are also omitted from comparison mode.
+The timeline can switch from separate wind, gust and direction rows to one compact row per forecast model. Each compact cell normally shows wind speed, gust and direction together. In landscape viewports below 500 px high, rows show only wind speed and direction; temperature and rain are also omitted from comparison mode.
 
 The two row groups are mounted together at their natural size during the transition, with the comparison rows positioned behind the normal rows. At either endpoint, only the active group remains mounted. A shared progress value expands the clipped containing height, fades out the normal rows and fades in the comparison rows. A direction-locked vertical touch gesture controls progress directly; releasing it selects the nearest mode. The map button is hidden on coarse-pointer devices and drives the same progress with a 0.5-second animation on desktop.
 
