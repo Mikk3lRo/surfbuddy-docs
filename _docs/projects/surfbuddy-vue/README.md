@@ -9,7 +9,7 @@ README in the repo is the unmodified Vite/Vue scaffold text — no project-speci
 - `src/main.ts`, `src/App.vue` — entry point and root component.
 - `src/router/index.ts` — 3 routes: `/` (home), `/:base64position` (a specific/shared map position, reuses `HomeView`), `/dev/GeneratePwaAssets` (dev utility).
 - `src/views/HomeView.vue` — the main (only real) app view.
-- `src/components/` — `TheOlMapRaw.vue` (core map and comparison toggle), `TheTimeSlider.vue` (HARMONIE-only, used in production), `TheTimeSliderMultiForecast.vue` (extended ECMWF timeline and forecast-model comparison; staging/dev only, see below), `ShareDialog.vue`, `Cell*.vue` (forecast value cells: wind/gust/direction/symbol/temperature/rain), `Button.vue`, `TheLogo.vue`. See [forecast model comparison](../../features/forecast-model-comparison.md).
+- `src/components/` — `TheOlMapRaw.vue` (core map and comparison toggle), `TheTimeSlider.vue` (HARMONIE-only, used in production), `TheTimeSliderMultiForecast.vue` (extended ECMWF timeline and forecast-model comparison; staging/dev only, see below), `ShareDialog.vue`, `Cell*.vue` (forecast value cells: wind/gust/direction/symbol/temperature/rain), `Button.vue`, `TheLogo.vue`. See [timeline display](../../features/timeline-display.md) and [forecast model comparison](../../features/forecast-model-comparison.md).
 - `src/classes/` — OpenLayers layer classes (`windspeedLayer.ts`, `winddirectionLayer.ts`, `crosshairLayer.ts`, `observationsLayer.ts`) and map helpers (`latlng.ts`, `axes.ts`, `windGrid.ts`).
 - `src/api/` — `ApiRequests.ts` (fetch wrapper), `ApiForecasts.ts`, `ApiShare.ts`.
 

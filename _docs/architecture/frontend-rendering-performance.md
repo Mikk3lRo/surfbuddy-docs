@@ -6,8 +6,10 @@ The map and multi-model timeline contain wide or continuously animated rendering
 
 - `TheTimeSliderMultiForecast.vue` keeps forecast data separate from row chrome. Row names scroll normally, while one shared icon/model rail and one shared unit rail provide the sticky columns.
 - Ordinary rows are 20 px high, the weather-symbol row is 25 px, and compact comparison rows are 36 px. Transition height is calculated from these fixed values rather than DOM measurement.
+- In landscape viewports below 500 px high, comparison rows are 20 px and omit gusts. Temperature and rain join the normal transition group instead of animating independently, so the single transition container interpolates from 100 px to 160 px.
 - Normal and comparison rows coexist only while transition progress is between 0 and 1. At either endpoint, the inactive data rows and their rail content are unmounted.
 - Opacity belongs on each complete row group and is present only during the transition. Never apply animated opacity or `will-change` to individual cells; doing so creates hundreds of compositor candidates and causes delayed painting during horizontal scroll.
+- Timeline-wide backgrounds such as night shading stay below a small number of row-level stacking contexts. Never raise every forecast cell with `z-index`; that creates hundreds of stacking contexts and makes horizontal scrolling visibly stutter.
 - Forecast cells use `contain: layout paint` to limit layout and paint invalidation.
 - The vertical mode gesture uses a direction lock. A gesture must move at least 10 px and its vertical distance must exceed its horizontal distance by a factor of 1.5 before it can control transition progress.
 
