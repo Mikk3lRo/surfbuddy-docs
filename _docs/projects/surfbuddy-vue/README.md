@@ -10,7 +10,7 @@ README in the repo is the unmodified Vite/Vue scaffold text — no project-speci
 - `src/router/index.ts` — 3 routes: `/` (home), `/:base64position` (a specific/shared map position, reuses `HomeView`), `/dev/GeneratePwaAssets` (dev utility).
 - `src/views/HomeView.vue` — the main (only real) app view.
 - `src/components/` — `TheOlMapRaw.vue` (core map and comparison toggle), `TheTimeSlider.vue` (legacy HARMONIE-only timeline), `TheTimeSliderMultiForecast.vue` (active extended ECMWF timeline and forecast-model comparison), `ShareDialog.vue`, `Cell*.vue` (forecast value cells: wind/gust/direction/symbol/temperature/rain), `Button.vue`, `TheLogo.vue`. See [timeline display](../../features/timeline-display.md) and [forecast model comparison](../../features/forecast-model-comparison.md).
-- `src/classes/` — OpenLayers layer classes (`windspeedLayer.ts`, `winddirectionLayer.ts`, `crosshairLayer.ts`, `observationsLayer.ts`) and map helpers (`latlng.ts`, `axes.ts`, `windGrid.ts`).
+- `src/classes/` — OpenLayers layer classes (`windspeedLayer.ts`, `winddirectionLayer.ts`, `crosshairLayer.ts`, `observationsLayer.ts`) and map helpers (`latlng.ts`, `axes.ts`, `windGrid.ts`). Observation graphs credit DMI or OpenWindMap according to the location ID prefix.
 - `src/api/` — `ApiRequests.ts` (fetch wrapper), `ApiForecasts.ts`, `ApiShare.ts`.
 
 ## Map rendering
@@ -22,6 +22,12 @@ Map markers and the multi-model timeline have rendering constraints that prevent
 ## Backend communication
 
 `src/api/ApiRequests.ts` hardcodes the API base URL (`https://backend.surfbuddy.dk`) — no `.env`, no dev/staging switch, no Vite proxy config. Endpoints consumed: `/forecasts/{model}/latest`, `/forecasts/{model}/p/{lat}/{lng}` with optional `comparison=1`, `/observations/latest`, `/observations/location/{id}`, plus the share endpoint (`ApiShare.ts`) that returns a token used to build `https://surfbuddy.dk/s-{token}` links.
+
+## Attribution
+
+- The always-visible forecast-run indicator links to Open-Meteo for point forecasts and dynamically credits DMI or ECMWF for the active map step.
+- Observation graphs link to DMI or OpenWindMap according to the station ID prefix.
+- `AboutLogo.vue` contains the general data-source acknowledgements, CC BY 4.0 link, transformation notice, and ECMWF disclaimer.
 
 ## No auth
 
