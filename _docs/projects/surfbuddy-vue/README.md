@@ -25,7 +25,7 @@ Map markers and the multi-model timeline have rendering constraints that prevent
 
 ## Backend communication
 
-`src/api/ApiRequests.ts` hardcodes the API base URL (`https://backend.surfbuddy.dk`) — no `.env`, no dev/staging switch, no Vite proxy config. Endpoints consumed: `/forecasts/{model}/latest`, `/forecasts/{model}/p/{lat}/{lng}`, `/forecasts/comparison/p/{lat}/{lng}`, `/observations/latest`, `/observations/location/{id}`, plus the share endpoint (`ApiShare.ts`) that returns a token used to build `https://surfbuddy.dk/s-{token}` links.
+`src/api/ApiRequests.ts` hardcodes the API base URL (`https://backend.surfbuddy.dk`) — no `.env`, no dev/staging switch, no Vite proxy config. Endpoints consumed: `/forecasts/{model}/latest`, `/forecasts/{model}/p/{lat}/{lng}` with optional `comparison=1`, `/observations/latest`, `/observations/location/{id}`, plus the share endpoint (`ApiShare.ts`) that returns a token used to build `https://surfbuddy.dk/s-{token}` links.
 
 ## No auth
 

@@ -45,7 +45,7 @@ On a 429, that specific mirror is blocked for 300s (`settingsDatastore` key `ecm
 
 The thinning boundary is aligned to ECMWF's actual UTC-anchored native GRIB steps (not round Danish local hours, unlike the rest of the point-forecast display) so that each shown ECMWF row can be matched to a real generated map tile — a `mapTime` field is attached when the matched tile's actual valid time differs from the row's own (Danish-local) timestamp, shown in `TheOlMapRaw.vue`'s time indicator.
 
-The separate `/forecasts/comparison/p/{lat}/{lng}` endpoint uses the same access gate but returns wind point forecasts for eight Open-Meteo models. See [forecast model comparison](../features/forecast-model-comparison.md).
+The point-forecast endpoint accepts `comparison=1` behind the same access gate and then returns its normal sections plus wind forecasts for eight Open-Meteo models. See [forecast model comparison](../features/forecast-model-comparison.md).
 
 ## Cost
 

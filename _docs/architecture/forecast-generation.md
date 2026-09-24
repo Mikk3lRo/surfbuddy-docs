@@ -10,4 +10,4 @@ All in `surfbuddy-v3`, triggered by [cron](cron.md).
 
 `src/geometry/` (points, polygons, rectangles, bounds, projections, tile math) is shared plumbing used by steps 2-4.
 
-Point forecasts (a single lat/lng rather than a tile) go through `apiHandlers/forecastHandler` instead, using `openMeteo.php` directly — they don't go through the marching-squares/raycasting pipeline. The extended ECMWF timeline and separate multi-model comparison endpoint are gated to staging/development server-side. See [ECMWF map fetch](ecmwf-map-fetch.md#point-forecasts-stagingdev-only) and [forecast model comparison](../features/forecast-model-comparison.md).
+Point forecasts (a single lat/lng rather than a tile) go through `apiHandlers/forecastHandler` instead, using `openMeteo.php` directly — they don't go through the marching-squares/raycasting pipeline. The extended ECMWF timeline and optional multi-model data in point-forecast responses are gated to staging/development server-side. See [ECMWF map fetch](ecmwf-map-fetch.md#point-forecasts-stagingdev-only) and [forecast model comparison](../features/forecast-model-comparison.md).

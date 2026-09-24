@@ -24,7 +24,7 @@ MySQL/MariaDB (database `SB`) via the author's own `mikk3lro/atomix-databases` P
 
 ## How it relates to the other repos
 
-- Serves the frontend (`surfbuddy-vue`) directly over HTTP/CORS: `/forecasts/...` including the lazy comparison endpoint, `/tiles/...`, `/observations/...`, `/share` (see frontend's `src/api/`).
+- Serves the frontend (`surfbuddy-vue`) directly over HTTP/CORS: `/forecasts/...` including optional comparison data in point-forecast responses, `/tiles/...`, `/observations/...`, `/share` (see frontend's `src/api/`).
 - Its `/cron` route is invoked every minute by `surfbuddy-server`'s system cron, not scheduled by this repo itself.
 
 ## Secrets committed in this repo
