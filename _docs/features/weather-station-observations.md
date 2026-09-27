@@ -10,6 +10,12 @@ Surfbuddy combines live observations from DMI and OpenWindMap in the same backen
 - Location IDs are namespaced as `dmi_*` and `openwindmap_*`.
 - Fetch transport failures are recorded in `errorsDatastore`; malformed successful responses fail loudly.
 
+## Planned CWOP integration
+
+TODO: Add Danish CWOP wind stations through a persistent APRS-IS listener managed by systemd on the VPS. Use NOAA's MADIS `APRSWXNETStation.txt` registry to discover Danish station IDs, then subscribe to those IDs directly instead of relying on APRS-IS geographic filters, which can miss positionless weather packets. Store valid wind observations through the existing observation pipeline and apply the same freshness rules as the other sources.
+
+At the time of assessment, the registry contained 18 Danish CWOP stations; 16 had reported wind within 24 hours and 15 within one hour. Other Danish APRS weather stations may exist outside the CWOP registry and should be evaluated separately.
+
 ## Freshness and retention
 
 - `/observations/latest` returns only parameters measured within the last hour and only locations with wind direction data. A known station therefore disappears from the map when its measurements become stale without being removed from the database.
@@ -21,4 +27,3 @@ Surfbuddy combines live observations from DMI and OpenWindMap in the same backen
 - The frontend refreshes `/observations/latest` every three minutes.
 - Map labels, graph-axis values, and graph tooltips display wind speed with one decimal while the stored values retain their original precision.
 - Station graphs credit DMI or OpenWindMap according to the location ID prefix.
-
