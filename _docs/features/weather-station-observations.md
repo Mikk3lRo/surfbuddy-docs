@@ -16,6 +16,22 @@ TODO: Add Danish CWOP wind stations through a persistent APRS-IS listener manage
 
 At the time of assessment, the registry contained 18 Danish CWOP stations; 16 had reported wind within 24 hours and 15 within one hour. Other Danish APRS weather stations may exist outside the CWOP registry and should be evaluated separately.
 
+## Other source candidates
+
+Open wind sources surveyed in September 2026 from public station lists (not tested for fresh data). "Extent" is the HARMONIE crop, lat 52–59, lon −1–25.
+
+| Source | Active wind stations | In extent | In Denmark | New for us |
+|---|---|---|---|---|
+| DMI metObs (in use) | 398 with `wind_dir` | 258 | 258 | Already collected |
+| DMI oceanObs | 0 (180 tide gauges) | 180 | 180 | No wind parameters |
+| DWD (Germany) | 277 | 92 | 0 | ~92 |
+| SMHI (Sweden) | 183 | 59 | 0 | ~59 |
+
+- **DMI:** `opendataapi.dmi.dk/v2/oceanObs` needs no key but has only water level. The other 140 metObs stations with `wind_dir` are Greenland and the Faroe Islands.
+- **DWD:** 10-minute wind files under `opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/wind/now/`, one zipped CSV per station; coordinates in `recent/zehn_min_ff_Beschreibung_Stationen.txt`. 48 of the 92 in-extent stations are north of lat 53.5, including Fehmarn, List auf Sylt, Flensburg, Schleswig, Kiel, Leck and Helgoland. Cadence fits the ~110 s fetch loop; the file format is more work than the JSON APIs used so far. Not yet checked: how many lie within e.g. 50 km of Denmark.
+- **SMHI:** REST API at `opendata-download-metobs.smhi.se` (parameters 3 direction, 4 speed, 21 gust; station list has an `active` flag). Values are 10-minute averages published once per hour, so weak as live data. The 59 in-extent stations cover Skåne and the Øresund.
+- **Ruled out:** Holfuy (API not open by default), WeatherFlow Tempest (multi-station use restricted), Windguru (no open station data), MET Norway Frost (needs client ID, rarely relevant). Vejdirektoratet (`api.vejdirektoratet.dk`) is unverified: unclear whether wind stations are open, likely needs a key.
+
 ## Freshness and retention
 
 - `/observations/latest` returns only parameters measured within the last hour and only locations with wind direction data. A known station therefore disappears from the map when its measurements become stale without being removed from the database.
