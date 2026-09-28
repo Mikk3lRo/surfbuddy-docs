@@ -31,3 +31,7 @@ Not read in detail, not to be exposed in docs or chat — locations only, so fut
 - `modified_files/root/.ssh/authorized_keys`
 - `modified_files/var/www/backend.surfbuddy.dk/.ssh/id_ed25519` (private key) and `.pub`
 - Plaintext DB passwords hardcoded in `scripts/install.php` and `classes/config.php`
+
+## Runtime secrets
+
+The installer keeps Netatmo OAuth credentials outside Git in `/etc/surfbuddy/backend-secrets.env`. On the first interactive run it prompts without echo for any missing value, preserves existing values on later runs, and injects them into the backend PHP-FPM pool. The file and generated pool configuration are root-only.
