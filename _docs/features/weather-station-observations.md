@@ -40,8 +40,23 @@ Open wind sources surveyed in September 2026 from public station lists (not test
 - `/observations/location/{locationId}` returns the last 12 hours for the station graph.
 - Stored observations are retained for three days and cleaned daily.
 
+## Netatmo production readiness
+
+**TODO: Do not expose Netatmo observations in production until their wind directions have been validated.**
+
+The initial direction analysis covered only a few hours with relatively light wind. Many stations alternated between `359°` and other values, while comparisons with nearby DMI stations showed apparently stable station-specific offsets. This sample cannot establish whether `359°` represents an unavailable direction or whether the offsets come from installation errors, local turbulence, low-speed measurement uncertainty or insufficient variation in the prevailing wind.
+
+Before enabling Netatmo in production:
+
+- collect several days spanning stronger wind and materially different wind directions;
+- compare only sufficiently strong, time-aligned observations with nearby DMI stations;
+- require observations across multiple prevailing directions before classifying a station-specific offset;
+- decide how to handle `359°`, unreliable directions and stations with persistent disagreement;
+- verify that omitting an invalid direction cannot expose a stale older direction as current.
+
 ## Frontend
 
 - The frontend refreshes `/observations/latest` every three minutes. Staging and local development opt into experimental Netatmo observations; production does not.
+- Observation markers identify their source by background color: dark blue for DMI, dark red for OpenWindMap/Pioupiou and dark green for Netatmo.
 - Map labels, graph-axis values, and graph tooltips display wind speed with one decimal while the stored values retain their original precision.
 - Station graphs credit DMI, OpenWindMap or Netatmo according to the location ID prefix.
