@@ -27,3 +27,16 @@ Do not resize the OpenLayers target on every transition frame. Repeated map resi
 - Clicking the map moves the ring to the selected coordinate and uses `View.animate()` to center the map.
 
 Never drive marker animation by calling `map.render()` from an OpenLayers `postrender` handler. That creates a permanent full-map render loop. Marker animation must remain independent of map rendering, and render objects must not be allocated per animation frame.
+
+## Wind tile format and contour smoothing
+
+Keep wind-speed contours as GeoJSON rendered by OpenLayers. The angular appearance of small polygons is an accepted tradeoff for sharp and responsive rendering from map zoom 3 through 13.
+
+SVG and PNG alternatives were evaluated and rejected:
+
+- Quadratic Bézier SVG contours looked better and remained seamless only when smoothing used the complete polygon before tile clipping. Smoothing already-clipped polygons loses the neighboring points needed at tile boundaries.
+- Unclipped SVG paths initially totalled about 12.6 MB for one representative HARMONIE forecast step, compared with 1.9 MB of GeoJSON. Conservative removal of off-tile geometry and 0.5 px global simplification reduced SVG to about 1.38 MB without visible seams, but browser pan and zoom still stuttered because SVG tiles had to be rasterized repeatedly.
+- Server-rasterized 256 px PNG tiles reduced the same step to about 0.32 MB, but became severely blurred above the native forecast zoom. The forecast stops at zoom 5 while the map reaches zoom 13, so a zoom-5 raster tile can be enlarged by a factor of 256.
+- Covering the current twelve zoom-5 tiles at zoom 13 would require 786,432 PNG files per forecast step. A complete zoom 3-13 pyramid would require about 1,048,580 files per step.
+
+Do not revisit SVG by only reducing file size, or PNG by only increasing source resolution. A viable replacement needs a different rendering architecture, such as topology-aware curved vector rendering or an on-demand high-zoom raster cache.
