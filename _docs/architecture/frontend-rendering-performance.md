@@ -32,6 +32,10 @@ Never drive marker animation by calling `map.render()` from an OpenLayers `postr
 
 Keep wind-speed contours as GeoJSON rendered by OpenLayers. The angular appearance of small polygons is an accepted tradeoff for sharp and responsive rendering from map zoom 3 through 13.
 
+Keep the polygon simplification tolerance at `0.001`. A tolerance of `0.01` reduced one representative HARMONIE step from 1.83 MB to 0.97 MB, but visibly removed small regions and moved larger contours. It improved median first rendering by 34 ms in Firefox, 74 ms in Chrome, and 61 ms in iPhone Safari, while measured pan and zoom frame times were effectively unchanged. The one-time loading gain does not justify a less faithful presentation.
+
+A wind-tile benchmark is available in local development and staging. It reloads the active GeoJSON layer three times and reports median first rendering, resource sizes, animation frame times, and long tasks where supported. Use it for comparisons after changing tile generation or rendering; absolute timings vary by browser and device.
+
 SVG and PNG alternatives were evaluated and rejected:
 
 - Quadratic Bézier SVG contours looked better and remained seamless only when smoothing used the complete polygon before tile clipping. Smoothing already-clipped polygons loses the neighboring points needed at tile boundaries.
