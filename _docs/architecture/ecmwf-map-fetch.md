@@ -27,7 +27,7 @@ The crop bounding box is much larger than DMI's Denmark-only one — Europe + No
 
 ## Instance discovery
 
-`ECMWF::newestInstance()` is anchored on whatever instance is already on disk, not on guessing publish timing from "now": it checks exactly one candidate, the instance one cycle (6h) after the current local newest, since ECMWF's publish order is strictly sequential — if that one isn't out yet, no later one is either. This is normally a single HTTP request per call (cached 10 minutes). It only falls back to a short bounded search (up to 3 candidates, 6h apart) when there's no local instance at all yet (first ever run) — deliberately not trying to catch up in one go if far behind; a stale instance just advances one cycle every 10 minutes until it's current.
+`ECMWF::newestInstance()` is normally anchored on the newest instance already on disk. It checks exactly one candidate, the instance one cycle (6h) later, since ECMWF's publish order is sequential. This is normally a single HTTP request per call, cached for 10 minutes. If no local instance exists or it is more than 12 hours old, the method instead searches up to three recent candidates, 6 hours apart, so recovery skips obsolete runs and resumes from the newest published data.
 
 ## Rate limiting and mirrors
 
