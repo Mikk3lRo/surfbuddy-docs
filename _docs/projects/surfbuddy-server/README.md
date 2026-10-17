@@ -6,7 +6,20 @@ No README/INSTALL exists in the repo itself; `scripts/install.php` is the source
 
 ## This server is not Surfbuddy-only
 
-The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/staging envs). Don't assume every vhost or DB user in `install.php` is part of Surfbuddy.
+The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/staging envs, the Scan Organizer). Don't assume every vhost or DB user in `install.php` is part of Surfbuddy.
+
+## Scan Organizer sites
+
+`docs.surfbuddy.dk` (user `scanorg`, uid 1093, DB `scanorg_live`) and `docsstaging.surfbuddy.dk` (user `scanorgstaging`, uid 1094, DB `scanorg_staging`), deployed from a separate repo by rsync as the site user.
+
+- Docroot is `web/public`; the placeholder `index.html` is written only while that folder is empty.
+- Opt-in `$sites` keys: `secret_dir` creates `secret/` (0700, site user, outside `web/`), `generated_secrets` lists env names with byte lengths, `db.pass_secret` takes the DB password from those.
+- Generated secrets live in root-only `/etc/surfbuddy/<user>-secrets.env`, are created once, and are appended as `env[...]` to the pool file on every run (same mechanism as backend secrets).
+- Pools: `display_errors` off, `open_basedir` limited to the site home, own `tmp/` for uploads and sessions.
+- Neither vhost uses Basic Auth; the app handles its own login.
+- `scripts/cron.php` takes an optional URL argument (default the backend); `cron.d/cron` hits `/cron` on both sites every minute.
+- Packages added: `poppler-utils`, `php8.4-gd`, `php8.4-mbstring`.
+- Not set up: backup of the databases and `secret/`.
 
 ## Layout
 
