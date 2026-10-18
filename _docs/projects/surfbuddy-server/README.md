@@ -19,7 +19,7 @@ The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/
 - Neither vhost uses Basic Auth; the app handles its own login.
 - `scripts/cron.php` takes an optional URL argument (default the backend); `cron.d/cron` hits `/cron` on both sites every minute.
 - Packages added: `poppler-utils`, `php8.4-gd`, `php8.4-mbstring`.
-- Not set up: backup of the databases and `secret/`.
+- Backup of the databases and `secret/`: see [backup](backup.md).
 
 ## Layout
 
