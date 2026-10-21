@@ -34,6 +34,7 @@ The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/
 
 - `modified_files/etc/apache2/sites-available/` defines vhosts for `backend.surfbuddy.dk`/`api.surfbuddy.dk` (docroot `/var/www/backend.surfbuddy.dk/web/public`, PHP-FPM) — this serves **surfbuddy-v3**.
 - Same directory defines vhosts for `frontend.surfbuddy.dk`/`surfbuddy.dk`/`app.surfbuddy.dk` (docroot `/var/www/frontend.surfbuddy.dk/web`) — this serves the built **surfbuddy-vue** static output.
+- Every `*-http.conf` vhost (incl. the default one) redirects all of port 80 to https except `^/\.well-known/acme-challenge/`, which certbot's webroot challenge needs.
 - `modified_files/etc/cron.d/cron` runs `scripts/cron.php` every minute, which just hits `https://backend.surfbuddy.dk/cron` — i.e. this repo triggers surfbuddy-v3's scheduled forecast-fetch, it doesn't run any forecast logic itself. See [cron](../../architecture/cron.md).
 
 ## Secrets committed in this repo
