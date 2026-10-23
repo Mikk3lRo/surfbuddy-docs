@@ -23,7 +23,7 @@ Encrypted restic backups of selected site data, pushed to a Hetzner Storage Box 
 | Site | Schedule | Retention | Alert after |
 |---|---|---|---|
 | `docs.surfbuddy.dk` | nightly 03:15 | 14 daily, 8 weekly, 6 monthly | 36 h |
-| `docsstaging.surfbuddy.dk` | Sundays 04:00 | 4 weekly | 192 h |
+| `docsstaging.surfbuddy.dk` | nightly 03:45 | 14 daily, 8 weekly, 6 monthly | 36 h |
 
 ## Alerts
 
