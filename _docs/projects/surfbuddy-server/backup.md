@@ -32,7 +32,9 @@ Encrypted restic backups of selected site data, pushed to a Hetzner Storage Box 
 - `scripts/backup-report.php` looks at the backups from the Storage Box side (restic snapshot lists and `df` over SSH), not at local stamps:
   - `check` runs daily at 08:30 through monit (`/etc/monit/conf.d/backups`) and alerts when a repository has no snapshot newer than its `max_age_hours`, cannot be read, or the Storage Box is more than 20 % full. The 20 % limit is not a capacity limit; passing it means something unexpected is filling the box.
   - `report --mail` runs Mondays 08:00 from cron and mails the snapshot lists and Storage Box usage to root.
-- Monit (`/etc/monit/monitrc`, alerts to the owner) has no other checks and no web interface beyond localhost:2812.
+- Monit (`/etc/monit/monitrc`, alerts to the owner) also watches system services and certificates; its web interface is only reachable through the protected default vhost.
+- The backup check needs `/root/.ssh` under monit, so `modified_files/etc/systemd/system/monit.service.d/override.conf` sets `ProtectHome=read-only`. The script disables PCRE JIT and keeps its output short because monit stores only the first ~512 bytes of a check's output.
+- Test the check in monit's sandbox: `systemd-run --wait --pipe -p ProtectHome=read-only -p MemoryDenyWriteExecute=yes env -i /usr/bin/php /usr/surfbuddy/scripts/backup-report.php check`.
 - No alert is possible if the whole server is down.
 
 ## Restore
