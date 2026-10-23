@@ -29,6 +29,10 @@ Encrypted restic backups of selected site data, pushed to a Hetzner Storage Box 
 
 - `backup.php` writes only errors to stderr; cron mails them to root, which `/root/.forward` sends on to the owner.
 - Run output (restic summary with sizes) is appended to `/var/log/surfbuddy-backup.log`; success stamps are `/var/lib/surfbuddy-backup/<domain>.ok`.
+- `scripts/backup-report.php` looks at the backups from the Storage Box side (restic snapshot lists and `df` over SSH), not at local stamps:
+  - `check` runs daily at 08:30 through monit (`/etc/monit/conf.d/backups`) and alerts when a repository has no snapshot newer than its `max_age_hours`, cannot be read, or the Storage Box is more than 20 % full. The 20 % limit is not a capacity limit; passing it means something unexpected is filling the box.
+  - `report --mail` runs Mondays 08:00 from cron and mails the snapshot lists and Storage Box usage to root.
+- Monit (`/etc/monit/monitrc`, alerts to the owner) has no other checks and no web interface beyond localhost:2812.
 - No alert is possible if the whole server is down.
 
 ## Restore
