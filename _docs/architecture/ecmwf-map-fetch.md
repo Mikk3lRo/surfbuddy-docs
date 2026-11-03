@@ -21,7 +21,7 @@ Shared with DMI via `mapTiles/tileGenerator.php`, which was factored out of `DMI
 
 ECMWF generates tiles at a **single fixed zoom level** (`ECMWF::TILE_ZOOM`, currently 3), not DMI's full/half/quarter-rez set (zoom 5/4/3) — its native ~0.25° grid doesn't carry enough detail to benefit from multiple resolutions. The frontend's `windspeedLayer.ts` is given `minZoom === maxZoom` for ECMWF's tiles; OpenLayers' `TileGrid.getZForResolution()` clamps every view zoom to that single level automatically (confirmed in `node_modules/ol/tilegrid/TileGrid.js`), so no custom over/under-zoom handling was needed.
 
-The available forecast steps depend on the run: 00/12 UTC runs contain 3-hourly steps through 144h and 6-hourly steps through 240h, while 06/18 UTC runs contain 3-hourly steps through 90h. ECMWF publishes a run progressively. A 404 for the next valid step means it is not available yet, so the cron run stops there without recording an error or retrying immediately; the next cron invocation resumes from that step.
+`ECMWF::availableSteps()` reads each run's published `.index` filenames from ECMWF's file catalog, cached for 5 minutes. The horizon and cadence are not encoded locally. As of 2026-11-03, 00/12 UTC runs contain 3-hourly steps through 144h and 6-hourly steps through 360h, while 06/18 UTC runs contain 3-hourly steps through 144h. Progressive publication is handled by fetching the steps currently listed and discovering later additions on subsequent cron invocations. Catalog failure falls back to persisted or locally observed steps and probes the next plausible direct `.index` objects, so the catalogs are not required for known data.
 
 The crop bounding box is much larger than DMI's Denmark-only one — Europe + North Atlantic (lat 30–75, lon -40–40) — and still cheap: ECMWF's 0.25° grid over that whole area (~58k points) is a fraction of DMI's ~2km grid over just Denmark (~560k points).
 
@@ -41,6 +41,8 @@ AWS (`ecmwf-forecasts.s3.eu-central-1.amazonaws.com`) and Azure (`ai4edataeuwest
 
 On a 429, that specific mirror is blocked for 300s (`settingsDatastore` key `ecmwfRateLimitedUntil_<md5(mirror)>`, so it persists across cron invocations) and the next mirror is tried; a non-429 error (e.g. 404 - not published yet) isn't mirror-specific and isn't retried on another mirror. A 429 is logged both to the timing log and to `errorsDatastore` (visible in the same error-count alerting DMI's issues use).
 
+Step discovery reads the primary portal's directory listing and falls back to Google Cloud's bucket API. Both are optional discovery aids; GRIB downloads and fallback probes use the direct index/object paths through the mirror fallback above.
+
 ## Point forecasts
 
 `apiHandlers/forecastHandler.php`'s `pointForecast()` appends ECMWF sections (via Open-Meteo's `ecmwf_ifs025` model, not `ecmwf_seamless`) after the HARMONIE section, thinned to every 3rd hour for the first ~5 days then every 6th hour.
@@ -51,4 +53,4 @@ The point-forecast endpoint accepts `comparison=1` and then returns its normal s
 
 ## Cost
 
-~1.5MB per forecast step (10u+10v combined, CCSDS-compressed, whole global 0.25° field — Range requests fetch by GRIB message, not by geographic crop, same limitation DMI has). The two daily 00/12 UTC runs have 65 steps and the 06/18 UTC runs have 31 steps, for roughly 0.3GB/day or 9GB/month from ECMWF's servers.
+~1.5MB per forecast step (10u+10v combined, CCSDS-compressed, whole global 0.25° field — Range requests fetch by GRIB message, not by geographic crop, same limitation DMI has). At the current 85 steps for 00/12 runs and 49 steps for 06/18 runs, this is roughly 0.4GB/day or 12GB/month from ECMWF's servers.

@@ -10,13 +10,14 @@ DMI retired `dmigw.govcloud.dk` on 2026-06-30 in favour of `opendataapi.dmi.dk`.
 
 Forecast grids are fetched from DMI's GRIB2 files instead:
 
-1. `DMI::findGribFile()` queries the STAC `forecastdata` API (`/v1/forecastdata/collections/harmonie_dini_sf/items?modelRun=...&datetime=...`) for the file covering one forecast step. This is a separate, lightweight metadata endpoint from EDR and has not been observed to 429.
-2. The GRIB file itself (~600MB, all parameters, full model domain — Northwestern Europe/North Atlantic, not just Denmark) is a static file on S3 (`dmi-opendata.s3.eu-north-1.amazonaws.com`), not served by DMI's own API gateway at all.
-3. `gribReader::fetchIndex()` fetches the file's `.index` (a small wgrib-style text file with per-message byte offsets) and locates the `WIND` / `WDIR` messages at "10 m above ground".
-4. `gribReader::fetchRange()` downloads only those two GRIB2 messages via HTTP Range requests (~15MB combined per forecast step, for the whole domain — there's no way to request a smaller geographic area at this stage, unlike EDR's `bbox` parameter).
-5. `gribReader` decodes the two messages, and `DMI::fetchWindGrid()` crops the result down to the same default Denmark bounding box the EDR `/cube` call used to request server-side (crop now happens client-side, after decoding, since a GRIB2 message is one indivisible compressed block).
+1. `DMI::availableForecastFiles()` lists and paginates every STAC `forecastdata` item for the current model run. Cron fetches every forecast time present in this catalog; the horizon is not hardcoded. The current HARMONIE runs contain 61 hourly steps from +0 through +60.
+2. The catalog's GRIB URLs are passed directly into the fetch pipeline, so there is no per-step STAC lookup. If catalog discovery fails, cron uses the persisted or locally observed schedule and constructs the existing deterministic S3 filenames.
+3. The GRIB file itself (~600MB, all parameters, full model domain — Northwestern Europe/North Atlantic, not just Denmark) is a static file on S3 (`dmi-opendata.s3.eu-north-1.amazonaws.com`), not served by DMI's own API gateway at all.
+4. `gribReader::fetchIndex()` fetches the file's `.index` and locates the `WIND` / `WDIR` messages at "10 m above ground".
+5. `gribReader::fetchRange()` downloads only those two GRIB2 messages via HTTP Range requests (~15MB combined per forecast step for the whole domain).
+6. `gribReader` decodes the messages, and `DMI::fetchWindGrid()` crops them to the Denmark bounding box.
 
-Station observations (`DMI::fetchObservations()`/`fetchStations()`) and point forecasts (`openMeteo.php`) are unaffected by any of this — they still use the EDR `metObs` endpoint and Open-Meteo respectively, neither of which has shown the same congestion.
+Station observations (`DMI::fetchObservations()`/`fetchStations()`) and point forecasts (`openMeteo.php`) are unaffected by any of this — they still use the EDR `metObs` endpoint and Open-Meteo respectively. Surfbuddy requests 16 point-forecast days so its own request length does not truncate a longer DMI horizon; Open-Meteo still determines when an expanded DMI run becomes available as point data.
 
 ## Format assumptions
 
@@ -31,7 +32,7 @@ All four were confirmed against DMI's actual files as of 2026-09-23. The grid's 
 
 ## Cost
 
-Per forecast step: ~15MB downloaded (uncropped, full-domain WIND+WDIR messages), ~1.6s to decode both (3,061,036 points each), ~190MB peak PHP memory (`DMI::fetchWindGrid()` raises `memory_limit` to 512M for this, since the default 128M isn't enough). Negligible against the existing per-step `sleep(15)` pacing in `cronHandler::updateForecasts()`.
+Per forecast step: ~15MB downloaded (uncropped, full-domain WIND+WDIR messages), ~1.6s to decode both (3,061,036 points each), ~190MB peak PHP memory (`DMI::fetchWindGrid()` raises `memory_limit` to 512M for this, since the default 128M isn't enough).
 
 ## Validated against
 
