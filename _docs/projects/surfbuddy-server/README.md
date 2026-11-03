@@ -15,10 +15,10 @@ The box also hosts unrelated personal sites (`taust.dk`, a "todo" app with live/
 - Docroot is `web/public`; the placeholder `index.html` is written only while that folder is empty.
 - Opt-in `$sites` keys: `secret_dir` creates `secret/` (0700, site user, outside `web/`), `generated_secrets` lists env names with byte lengths, `db.pass_secret` takes the DB password from those.
 - Generated secrets live in root-only `/etc/surfbuddy/<user>-secrets.env`, are created once, and are appended as `env[...]` to the pool file on every run (same mechanism as backend secrets).
-- Pools: `display_errors` off, `open_basedir` limited to the site home, own `tmp/` for uploads and sessions.
+- Pools: `pm.max_children` 10, 2G uploads, 900 s request and Apache `Timeout`/`ProxyTimeout`, `display_errors` off, `open_basedir` limited to the site home, own `tmp/` for uploads and sessions.
 - Neither vhost uses Basic Auth; the app handles its own login.
 - `scripts/cron.php` takes an optional URL argument (default the backend); `cron.d/cron` hits `/cron` on both sites every minute.
-- Packages added: `poppler-utils`, `php8.4-gd`, `php8.4-mbstring`.
+- Packages added: `poppler-utils`, `ffmpeg`, `php8.4-gd`, `php8.4-mbstring`.
 - Backup of the databases and `secret/`: see [backup](backup.md).
 
 ## Default vhost and monitoring
